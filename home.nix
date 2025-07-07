@@ -4,6 +4,18 @@
   # TODO please change the username & home directory to your own
   home.username = "pasokata";
   home.homeDirectory = "/home/pasokata";
+  # This value determines the home Manager release that your
+  # configuration is compatible with. This helps avoid breakage
+  # when a new home Manager release introduces backwards
+  # incompatible changes.
+  #
+  # You can update home Manager without changing this value. See
+  # the home Manager release notes for a list of state version
+  # changes in each release.
+  home.stateVersion = "25.05";
+
+  # Let Home Manager install and manage itself.
+  programs.home-manager.enable = true;
 
   # link the configuration file in current directory to the specified location in home directory
   # home.file.".config/i3/wallpaper.jpg".source = ./wallpaper.jpg;
@@ -87,21 +99,19 @@
     ethtool
     pciutils # lspci
     usbutils # lsusb
+
+    gh
   ];
 
   # basic configuration of git, please change to your own
   programs.git = {
     enable = true;
     userName = "pasokata";
-    userEmail = "hogehoge@example.com";
-  };
-  programs.gh = {
-    enable = true;
-    gitCredentialHelper = {
-      enable = true;
+    userEmail = "84432010+pasokata@users.noreply.github.com";
+    extraConfig = {
+      credential."https://github.com".helper = "!gh auth git-credential";
     };
   };
-
 
   # starship - an customizable prompt for any shell
   programs.starship = {
@@ -146,16 +156,4 @@
     };
   };
 
-  # This value determines the home Manager release that your
-  # configuration is compatible with. This helps avoid breakage
-  # when a new home Manager release introduces backwards
-  # incompatible changes.
-  #
-  # You can update home Manager without changing this value. See
-  # the home Manager release notes for a list of state version
-  # changes in each release.
-  home.stateVersion = "25.05";
-
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
 }

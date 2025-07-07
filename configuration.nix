@@ -144,7 +144,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    brave vscode ghostty qmk obsidian discord gh python314 uv gemini-cli 
+    brave vscode ghostty qmk obsidian discord python314 uv gemini-cli 
     gnome-shell-extensions zellij nodejs 
   ];
   # Some programs need SUID wrappers, can be configured further or are
