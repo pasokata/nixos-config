@@ -112,7 +112,6 @@
       credential."https://github.com".helper = "!gh auth git-credential";
     };
   };
-
   # starship - an customizable prompt for any shell
   programs.starship = {
     enable = true;
