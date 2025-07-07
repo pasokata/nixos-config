@@ -93,8 +93,15 @@
   programs.git = {
     enable = true;
     userName = "pasokata";
-    userEmail = "";
+    userEmail = "hogehoge@example.com";
   };
+  programs.gh = {
+    enable = true;
+    gitCredentialHelper = {
+      enable = true;
+    };
+  };
+
 
   # starship - an customizable prompt for any shell
   programs.starship = {
@@ -148,4 +155,7 @@
   # the home Manager release notes for a list of state version
   # changes in each release.
   home.stateVersion = "25.05";
+
+  # Let Home Manager install and manage itself.
+  programs.home-manager.enable = true;
 }
