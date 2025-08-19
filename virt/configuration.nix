@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports =
@@ -10,12 +10,10 @@
       ./hardware-configuration.nix
     ];
 
-  # Enable Flakes
-  nix.settings.experimental-features = ["nix-command" "flakes"];
-
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.grub.enable = true;
+  boot.loader.grub.device = "/dev/vda";
+  boot.loader.grub.useOSProber = true;
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -26,13 +24,21 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
-  
+
   # Set your time zone.
   time.timeZone = "Asia/Tokyo";
 
   # Select internationalisation properties.
+  i18n.inputMethod = {
+    type = "fcitx5";
+    enable = true;
+    fcitx5.waylandFrontend = true;
+    fcitx5.addons = with pkgs;[
+      fcitx5-mozc
+      fcitx5-gtk
+    ];
+  };
   i18n.defaultLocale = "en_US.UTF-8";
-
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_US.UTF-8";
     LC_IDENTIFICATION = "en_US.UTF-8";
@@ -43,15 +49,6 @@
     LC_PAPER = "en_US.UTF-8";
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
-  };
-  i18n.inputMethod = {
-    type = "fcitx5";
-    enable = true;
-    fcitx5.waylandFrontend = true;
-    fcitx5.addons = with pkgs;[
-      fcitx5-mozc
-      fcitx5-gtk
-    ];
   };
 
   # Fonts
@@ -72,6 +69,7 @@
       };
     };
   };
+  
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -116,21 +114,29 @@
     packages = with pkgs; [
     #  thunderbird
     ];
-    shell = pkgs.bash;
-  };
-  programs.bash = {
-    # placed in system wide /etc/bashrc. To bypass this snippet, use --norc option.
-    interactiveShellInit = ''
-      if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
-      then
-        shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
-        exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
-      fi
-    '';
+    shell = pkgs.fish;
   };
 
-  # Install firefox.
+  # Enable Flakes
+  nix.settings.experimental-features = ["nix-command" "flakes"];
+  # Install nix-modules
   programs.firefox.enable = true;
+  programs.fish.enable = true;
+  programs._1password-gui.enable = true;
+  programs.zoom-us.enable = true;
+  programs.yazi.enable = true;
+  programs.tmux.enable = true;
+  programs.nano.enable = true;
+  programs.git.enable  = true;
+  programs.starship.enable  = true;
+  programs.virt-manager.enable = true;
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true;
+    viAlias = true;
+    vimAlias = true;
+  };
+  
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -138,11 +144,9 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    #vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    wget
-    brave
+    brave vscode ghostty qmk obsidian discord python314 uv gemini-cli 
+    gnome-shell-extensions zellij nodejs 
   ];
-
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
@@ -150,16 +154,6 @@
   #   enable = true;
   #   enableSSHSupport = true;
   # };
-  programs.git.enable = true;
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-    viAlias = true;
-    vimAlias = true;
-  };
-  programs._1password-gui.enable = true;
-
-  programs.command-not-found.enable = false; # consider nix-index
 
   # List services that you want to enable:
 
@@ -180,51 +174,4 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.05"; # Did you read the comment?
 
-  programs.dconf.enable = true;
-  programs.dconf.profiles = {
-    user.databases = [{
-      settings = with lib.gvariant; {
-        "org/gnome/desktop/interface".color-scheme = "prefer-dark";        
-        "org/gnome/desktop/peripherals/mouse".natural-scroll = true;
-        "org/gnome/nautilus/preferences".default-folder-viewer = "list-view";
-
-        "org/gnome/desktop/wm/keybindings" = {
-          switch-to-workspace-1 = [ "<Super>1" ];
-          switch-to-workspace-2 = [ "<Super>2" ];
-          switch-to-workspace-3 = [ "<Super>3" ];
-          switch-to-workspace-4 = [ "<Super>4" ];
-	  switch-windows =  ["<Alt>Tab"] ;
-	  switch-windows-backward = ["<Shift><Alt>Tab"];
-	  switch-applications = mkEmptyArray type.string;
-	  switch-applications-backward = mkEmptyArray type.string;
-        };
-
-        "org/gnome/shell/keybindings" = {
-          # Following binds have higher priority than above
-	  # for available keybindings, see (gsettings list-recursively org.gnome.shell.keybindings)
-          switch-to-application-1 = mkEmptyArray type.string;
-          switch-to-application-2 = mkEmptyArray type.string;
-          switch-to-application-3 = mkEmptyArray type.string;
-          switch-to-application-4 = mkEmptyArray type.string;
-        };
-	# custom shortcut
-        "org/gnome/settings-daemon/plugins/media-keys".custom-keybindings = [
-          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
-          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
-        ];
-        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
-          binding = "<Alt><Ctrl>T";
-          command = "ghostty";
-          name = "Terminal";
-        };
-        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
-          binding = "<Super>e";
-          command = "nautilus";
-          name = "File Manager";
-        };
-      };
-    }];
-  };
-
-  hardware.keyboard.qmk.enable = true;
 }
