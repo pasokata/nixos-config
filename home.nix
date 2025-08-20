@@ -1,4 +1,4 @@
-{ config, pkgs, ghostty, ... }:
+{ config, pkgs, ghostty, lib, ... }:
 
 {
   # TODO please change the username & home directory to your own
@@ -119,7 +119,8 @@
 
   programs.obsidian.enable = true;
 
-  programs.neovim = {
+  programs.neovim = 
+  {
     enable = true;
     defaultEditor = true;
     viAlias = true;
@@ -131,12 +132,26 @@
     extraLuaPackages = luaPkgs: with luaPkgs; [ ];
     plugins = with pkgs.vimPlugins; [ lazy-nvim ];
   };
-  xdg.configFile = {
-    "nvim".source = .config/nvim;
-    #"nvim/init.lua".source = null; # entry point
-    #"nvim/lua".source = null; # general config
-    #"nvim/plugin".source = null; # plugin config
-  };
+  xdg.configFile."nvim/init.lua".source = 
+    let
+      plugins = with pkgs.vimPlugins; [
+        gitsigns-nvim
+      ];
+      mkEntryFromDrv =
+        drv:
+        if lib.isDerivation drv then
+          {
+            name = "${lib.getName drv}";
+            path = drv;
+          }
+        else
+          drv;
+      lazy-plugins = pkgs.linkFarm "lazy-plugins" (builtins.map mkEntryFromDrv plugins);
+    in
+      pkgs.replaceVars ./.config/nvim/init.lua {
+        lazy-plugins-store-path = lazy-plugins;
+      };
+  
 
 
   programs.direnv = {
@@ -149,8 +164,14 @@
     enableFishIntegration = true;
   };
 
+  xdg.enable = true;
   xdg.configFile = {
-    "fcitx5/profile".source = .config/fcitx5/profile;
-    "qmk/qmk.ini".source = .config/qmk/qmk.ini;
+    "nvim/lua/plugins".source = ./.config/nvim/lua/plugins;
+    #"nvim" = {
+    #  source = ./.config/nvim;
+    #  recursive = true;
+    #};
+    "fcitx5/profile".source = ./.config/fcitx5/profile;
+    "qmk/qmk.ini".source = ./.config/qmk/qmk.ini;
   };
 }
