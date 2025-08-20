@@ -93,7 +93,17 @@
   };
   programs.gh.enable = true;
 
-  programs.fish.enable = true;
+  programs.fish = {
+    enable = true;
+    interactiveShellInit = ''
+      set fish_greeting "
+      fzf keybindings
+      CTRL-T: fuzzy find files and directories
+      CTRL-R: fuzzy find command histories
+      ALT-C : fuzzy cd
+      "
+    '';
+  };
   # starship - an customizable prompt for any shell
   programs.starship = {
     enable = true;
@@ -103,12 +113,29 @@
       aws.disabled = true;
       gcloud.disabled = true;
       line_break.disabled = false;
+      cmd_duration.disabled = true;
     };
   };
 
   programs.obsidian.enable = true;
+
   programs.neovim = {
     enable = true;
+    defaultEditor = true;
+    viAlias = true;
+    vimAlias = true;
+
+    extraConfig = "";
+    extraPackages = with pkgs;[lua-language-server vim-language-server bash-language-server nil];
+    extraLuaConfig = "";
+    extraLuaPackages = luaPkgs: with luaPkgs; [ ];
+    plugins = with pkgs.vimPlugins; [ lazy-nvim ];
+  };
+  xdg.configFile = {
+    "nvim".source = .config/nvim;
+    #"nvim/init.lua".source = null; # entry point
+    #"nvim/lua".source = null; # general config
+    #"nvim/plugin".source = null; # plugin config
   };
 
 
@@ -122,4 +149,8 @@
     enableFishIntegration = true;
   };
 
+  xdg.configFile = {
+    "fcitx5/profile".source = .config/fcitx5/profile;
+    "qmk/qmk.ini".source = .config/qmk/qmk.ini;
+  };
 }
