@@ -69,6 +69,7 @@
     file
     which
     tree
+    ghq
 
     # nix related
 
@@ -83,7 +84,6 @@
     # terminal
     ghostty.packages.${pkgs.stdenv.hostPlatform.system}.default
     tmux
-    zellij
 
     # dev
     gnumake
@@ -107,22 +107,15 @@
 
   programs.fish = {
     enable = true;
-    shellAliases = {
-      ls = "eza";
-    };
     interactiveShellInit = ''
       set fish_greeting "
       fzf keybindings
       CTRL-T: fuzzy find files and directories
       CTRL-R: fuzzy find command histories
       ALT-C : fuzzy cd
-      "
 
-      set ZELLIJ_AUTO_ATTACH true
-      #set ZELLIJ_AUTO_EXIT true
-      if status is-interactive
-        eval (zellij setup --generate-auto-start fish | string collect)
-      end
+      CMDs: y, zi 
+      "
     '';
   };
   # starship - an customizable prompt for any shell
@@ -234,4 +227,22 @@
   programs.eza = {
     enable = true;
   };
+
+  programs.yazi = {
+    enable = true;
+    enableFishIntegration = true;
+    shellWrapperName = "y";
+    settings = {
+      mgr = {
+        show_hidden = true;
+      };
+    };
+  };
+
+  programs.zellij = {
+    enable = true;
+    attachExistingSession = true;
+    enableFishIntegration = true;
+  };
+
 }

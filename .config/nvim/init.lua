@@ -434,11 +434,11 @@ require("lazy").setup({
 
 			vim.keymap.set("n", "<leader>e", function()
 				require("telescope").extensions.file_browser.file_browser()
-			end)
+			end, { desc = "file [E]xplorer" })
 
-			vim.keymap.set("n", "<leader>z", function()
+			vim.keymap.set("n", "<leader>zi", function()
 				require("telescope").extensions.zoxide.list()
-			end)
+			end, { desc = "exec [zi]" })
 		end,
 	},
 	{
