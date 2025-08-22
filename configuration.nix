@@ -2,16 +2,24 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Enable Flakes
-  nix.settings.experimental-features = ["nix-command" "flakes"];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -26,7 +34,7 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
-  
+
   # Set your time zone.
   time.timeZone = "Asia/Tokyo";
 
@@ -48,7 +56,7 @@
     type = "fcitx5";
     enable = true;
     fcitx5.waylandFrontend = true;
-    fcitx5.addons = with pkgs;[
+    fcitx5.addons = with pkgs; [
       fcitx5-mozc
       fcitx5-gtk
     ];
@@ -65,10 +73,19 @@
     fontDir.enable = true;
     fontconfig = {
       defaultFonts = {
-        serif = ["Noto Serif CJK JP" "Noto Color Emoji"];
-        sansSerif = ["Noto Sans CJK JP" "Noto Color Emoji"];
-        monospace = ["JetBrainsMono Nerd Font" "Noto Color Emoji"];
-        emoji = ["Noto Color Emoji"];
+        serif = [
+          "Noto Serif CJK JP"
+          "Noto Color Emoji"
+        ];
+        sansSerif = [
+          "Noto Sans CJK JP"
+          "Noto Color Emoji"
+        ];
+        monospace = [
+          "JetBrainsMono Nerd Font"
+          "Noto Color Emoji"
+        ];
+        emoji = [ "Noto Color Emoji" ];
       };
     };
   };
@@ -112,9 +129,12 @@
   users.users.pasokata = {
     isNormalUser = true;
     description = "pasokata";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
     packages = with pkgs; [
-    #  thunderbird
+      #  thunderbird
     ];
     shell = pkgs.bash;
   };
@@ -182,48 +202,62 @@
 
   programs.dconf.enable = true;
   programs.dconf.profiles = {
-    user.databases = [{
-      settings = with lib.gvariant; {
-        "org/gnome/desktop/interface".color-scheme = "prefer-dark";        
-        "org/gnome/desktop/peripherals/mouse".natural-scroll = true;
-        "org/gnome/nautilus/preferences".default-folder-viewer = "list-view";
+    user.databases = [
+      {
+        settings = with lib.gvariant; {
+          "org/gnome/desktop/interface".color-scheme = "prefer-dark";
+          "org/gnome/desktop/peripherals/mouse".natural-scroll = true;
+          "org/gnome/nautilus/preferences".default-folder-viewer = "list-view";
 
-        "org/gnome/desktop/wm/keybindings" = {
-          switch-to-workspace-1 = [ "<Super>1" ];
-          switch-to-workspace-2 = [ "<Super>2" ];
-          switch-to-workspace-3 = [ "<Super>3" ];
-          switch-to-workspace-4 = [ "<Super>4" ];
-	  switch-windows =  ["<Alt>Tab"] ;
-	  switch-windows-backward = ["<Shift><Alt>Tab"];
-	  switch-applications = mkEmptyArray type.string;
-	  switch-applications-backward = mkEmptyArray type.string;
-        };
+          "org/gnome/desktop/wm/keybindings" = {
+            switch-to-workspace-1 = [ "<Super>1" ];
+            switch-to-workspace-2 = [ "<Super>2" ];
+            switch-to-workspace-3 = [ "<Super>3" ];
+            switch-to-workspace-4 = [ "<Super>4" ];
+            switch-windows = [ "<Alt>Tab" ];
+            switch-windows-backward = [ "<Shift><Alt>Tab" ];
+            switch-applications = mkEmptyArray type.string;
+            switch-applications-backward = mkEmptyArray type.string;
+          };
 
-        "org/gnome/shell/keybindings" = {
-          # Following binds have higher priority than above
-	  # for available keybindings, see (gsettings list-recursively org.gnome.shell.keybindings)
-          switch-to-application-1 = mkEmptyArray type.string;
-          switch-to-application-2 = mkEmptyArray type.string;
-          switch-to-application-3 = mkEmptyArray type.string;
-          switch-to-application-4 = mkEmptyArray type.string;
+          "org/gnome/shell/keybindings" = {
+            # Following binds have higher priority than above
+            # for available keybindings, see (gsettings list-recursively org.gnome.shell.keybindings)
+            switch-to-application-1 = mkEmptyArray type.string;
+            switch-to-application-2 = mkEmptyArray type.string;
+            switch-to-application-3 = mkEmptyArray type.string;
+            switch-to-application-4 = mkEmptyArray type.string;
+          };
+          # custom shortcut
+          "org/gnome/settings-daemon/plugins/media-keys".custom-keybindings = [
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/"
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/"
+          ];
+          "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+            binding = "<Alt><Ctrl>t";
+            command = "ghostty";
+            name = "Terminal";
+          };
+          "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
+            binding = "<Super>e";
+            command = "nautilus";
+            name = "File Manager";
+          };
+          "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2" = {
+            binding = "<Super>b";
+            command = "brave";
+            name = "Browser";
+          };
+          "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3" = {
+            binding = "<Super>p";
+            command = "1password";
+            name = "Password Manager";
+          };
         };
-	# custom shortcut
-        "org/gnome/settings-daemon/plugins/media-keys".custom-keybindings = [
-          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
-          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
-        ];
-        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
-          binding = "<Alt><Ctrl>T";
-          command = "ghostty";
-          name = "Terminal";
-        };
-        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
-          binding = "<Super>e";
-          command = "nautilus";
-          name = "File Manager";
-        };
-      };
-    }];
+      }
+    ];
   };
 
   hardware.keyboard.qmk.enable = true;

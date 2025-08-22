@@ -1,4 +1,10 @@
-{ config, pkgs, ghostty, lib, ... }:
+{
+  config,
+  pkgs,
+  ghostty,
+  lib,
+  ...
+}:
 
 {
   # TODO please change the username & home directory to your own
@@ -49,6 +55,12 @@
     fd
     xclip
     bat
+    duf
+    dust
+    sd
+    btop
+    htop
+    procs
 
     # networking tools
     nmap # A utility for network discovery and security auditing
@@ -71,11 +83,11 @@
     # terminal
     ghostty.packages.${pkgs.stdenv.hostPlatform.system}.default
     tmux
+    zellij
 
     # dev
     gnumake
     gcc
-    
 
     # Deskstop
     discord
@@ -87,14 +99,17 @@
     enable = true;
     userName = "pasokata";
     userEmail = "84432010+pasokata@users.noreply.github.com";
-#     extraConfig = {
-#       credential."https://github.com".helper = "!gh auth git-credential";
-#     };
+    #     extraConfig = {
+    #       credential."https://github.com".helper = "!gh auth git-credential";
+    #     };
   };
   programs.gh.enable = true;
 
   programs.fish = {
     enable = true;
+    shellAliases = {
+      ls = "eza";
+    };
     interactiveShellInit = ''
       set fish_greeting "
       fzf keybindings
@@ -102,6 +117,12 @@
       CTRL-R: fuzzy find command histories
       ALT-C : fuzzy cd
       "
+
+      set ZELLIJ_AUTO_ATTACH true
+      #set ZELLIJ_AUTO_EXIT true
+      if status is-interactive
+        eval (zellij setup --generate-auto-start fish | string collect)
+      end
     '';
   };
   # starship - an customizable prompt for any shell
@@ -119,23 +140,51 @@
 
   programs.obsidian.enable = true;
 
-  programs.neovim = 
-  {
+  programs.neovim = {
     enable = true;
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;
 
     extraConfig = "";
-    extraPackages = with pkgs;[lua-language-server vim-language-server bash-language-server nil];
+    extraPackages = with pkgs; [
+      # LSP
+      lua-language-server
+      vim-language-server
+      bash-language-server
+      nil
+      # formatter
+      stylua
+      nixfmt-rfc-style
+    ];
     extraLuaConfig = "";
     extraLuaPackages = luaPkgs: with luaPkgs; [ ];
     plugins = with pkgs.vimPlugins; [ lazy-nvim ];
   };
-  xdg.configFile."nvim/init.lua".source = 
+  xdg.configFile =
     let
       plugins = with pkgs.vimPlugins; [
         gitsigns-nvim
+        nvim-lspconfig
+        fidget-nvim
+        blink-cmp
+        which-key-nvim
+        guess-indent-nvim
+        todo-comments-nvim
+        nvim-treesitter
+        mini-nvim
+        tokyonight-nvim
+        conform-nvim
+        nvim-lint
+        nvim-autopairs
+        # telescope
+        telescope-nvim
+        plenary-nvim
+        telescope-fzf-native-nvim
+        telescope-ui-select-nvim
+        telescope-file-browser-nvim
+        telescope-zoxide
+        nvim-web-devicons
       ];
       mkEntryFromDrv =
         drv:
@@ -147,12 +196,27 @@
         else
           drv;
       lazy-plugins = pkgs.linkFarm "lazy-plugins" (builtins.map mkEntryFromDrv plugins);
+      parsers = pkgs.symlinkJoin {
+        name = "treesitter-parsers";
+        paths = pkgs.vimPlugins.nvim-treesitter.withAllGrammars.dependencies;
+      };
+
     in
-      pkgs.replaceVars ./.config/nvim/init.lua {
+    {
+      "nvim/init.lua".source = pkgs.replaceVars ./.config/nvim/init.lua {
         lazy-plugins-store-path = lazy-plugins;
       };
-  
-
+      "nvim/lsp".source = with pkgs.vimPlugins; "${nvim-lspconfig}/lsp";
+      "nvim/parser".source = "${parsers}/parser";
+    }
+    // {
+      "nvim/lua/plugins".source = ./.config/nvim/lua/plugins;
+      "fcitx5/profile".source = ./.config/fcitx5/profile;
+      "qmk/qmk.ini".source = ./.config/qmk/qmk.ini;
+      "ghostty".source = ./.config/ghostty;
+      "zellij".source = ./.config/zellij;
+    };
+  xdg.enable = true;
 
   programs.direnv = {
     enable = true;
@@ -161,17 +225,13 @@
 
   programs.fzf = {
     enable = true;
-    enableFishIntegration = true;
   };
 
-  xdg.enable = true;
-  xdg.configFile = {
-    "nvim/lua/plugins".source = ./.config/nvim/lua/plugins;
-    #"nvim" = {
-    #  source = ./.config/nvim;
-    #  recursive = true;
-    #};
-    "fcitx5/profile".source = ./.config/fcitx5/profile;
-    "qmk/qmk.ini".source = ./.config/qmk/qmk.ini;
+  programs.zoxide = {
+    enable = true;
+  };
+
+  programs.eza = {
+    enable = true;
   };
 }
