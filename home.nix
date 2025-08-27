@@ -61,6 +61,7 @@
     btop
     htop
     procs
+    findutils
 
     # networking tools
     nmap # A utility for network discovery and security auditing
@@ -108,12 +109,29 @@
 
   programs.fish = {
     enable = true;
+    functions = {
+      reload = "source ~/.config/fish/config.fish";
+    };
+    shellAbbrs = {
+      rebuild = "sudo nixos-rebuild switch --flake .";
+    };
+    binds = {
+      "alt-g" = {
+        command = "z $(ghq root)/$(ghq list | fzf) && pwd && ls; commandline -f repaint";
+      };
+    };
+
+    # should not use keys taken by GNU Readline library
+    # CTRL: AEBFUKWYLD_PKCZ, ALT: BF
     interactiveShellInit = ''
       set fish_greeting "
       fzf keybindings
       CTRL-T: fuzzy find files and directories
       CTRL-R: fuzzy find command histories
-      ALT-C : fuzzy cd
+      CTRL-G: unlock zellij
+      ALT-C : fuzzy cd from current directory
+      ALT-G : fuzzy cd to git repository
+      ALT-E : edit scrollback in zellij
 
       CMDs: y, zi 
       "
