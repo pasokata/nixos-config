@@ -35,6 +35,14 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
+  services.avahi = {
+    enable = true;
+    publish.enable = true;
+    nssmdns4 = true;
+    nssmdns6 = true;
+  };
+  #services.tailscale.enable = true;
+
   # Set your time zone.
   time.timeZone = "Asia/Tokyo";
 
@@ -132,9 +140,11 @@
     extraGroups = [
       "networkmanager"
       "wheel"
+      "podman"
     ];
     packages = with pkgs; [
       #  thunderbird
+      podman-compose
     ];
     shell = pkgs.bash;
   };
@@ -261,4 +271,29 @@
   };
 
   hardware.keyboard.qmk.enable = true;
+
+  # podman
+  virtualisation.containers.enable = true;
+  virtualisation = {
+    podman = {
+      enable = true;
+      # Create a `docker` alias for podman, to use it as a drop-in replacement
+      dockerCompat = true;
+      # Required for containers under podman-compose to be able to talk to each other.
+      defaultNetwork.settings.dns_enabled = true;
+    };
+  };
+
+  fileSystems."/mnt/nas" = {
+    device = "white-eggplant.internal:/volume1/nas-home";
+    fsType = "nfs";
+    options = [
+      "x-systemd.automount"
+      "noauto"
+      "x-systemd.idle-timeout=3600"
+    ];
+  };
+  #optional, but ensures rpc-statsd is running for on demand mounting
+  boot.supportedFilesystems = [ "nfs" ];
+  services.rpcbind.enable = true; # needed for NFS
 }

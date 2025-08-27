@@ -55,8 +55,8 @@
     fd
     xclip
     bat
-    duf
-    dust
+    duf # df
+    dust # du
     sd
     btop
     htop
@@ -99,9 +99,10 @@
     enable = true;
     userName = "pasokata";
     userEmail = "84432010+pasokata@users.noreply.github.com";
-    #     extraConfig = {
-    #       credential."https://github.com".helper = "!gh auth git-credential";
-    #     };
+    extraConfig = {
+      init.defaultBranch = "main";
+      safe.directory = [ "/mnt/nas/Documents/obsidian_vault" ];
+    };
   };
   programs.gh.enable = true;
 

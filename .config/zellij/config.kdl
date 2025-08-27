@@ -150,7 +150,7 @@ keybinds clear-defaults=true {
     }
     shared_among "normal" "locked" {
         bind "Alt left" { MoveFocusOrTab "left"; }
-        bind "Ctrl Shift tab" { MoveFocusOrTab "right";}
+        bind "Ctrl Shift tab" { MoveFocusOrTab "left";}
         bind "Alt down" { MoveFocus "down"; }
         bind "Alt up" { MoveFocus "up"; }
         bind "Alt right" { MoveFocusOrTab "right"; }
