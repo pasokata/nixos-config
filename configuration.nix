@@ -303,4 +303,24 @@
     loadModels = [ "gpt-oss:20b" ];
   };
   services.open-webui.enable = true; # localhost:8080
+
+  systemd.timers."rsync-obsidian-vault" = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "60m";
+      OnUnitActiveSec = "60m";
+      Unit = "rsync-obsidian-vault.service";
+    };
+  };
+  systemd.services."rsync-obsidian-vault" = {
+    path = [ pkgs.openssh ];
+    script = ''
+      set -xeu
+      ${pkgs.rsync}/bin/rsync -az --delete ~/Documents/obsidian_vault pasokata@white-eggplant.internal:/volume1/nas-home/Documents/
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+      User = "pasokata";
+    };
+  };
 }
