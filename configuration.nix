@@ -296,4 +296,11 @@
   #optional, but ensures rpc-statsd is running for on demand mounting
   boot.supportedFilesystems = [ "nfs" ];
   services.rpcbind.enable = true; # needed for NFS
+
+  services.ollama = {
+    # https://wiki.nixos.org/wiki/Ollama
+    enable = true;
+    loadModels = [ "gpt-oss:20b" ];
+  };
+  services.open-webui.enable = true; # localhost:8080
 }

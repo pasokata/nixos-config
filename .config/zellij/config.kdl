@@ -164,7 +164,7 @@ keybinds clear-defaults=true {
         bind "Alt j" { MoveFocus "down"; }
         bind "Alt k" { MoveFocus "up"; }
         bind "Alt l" { MoveFocusOrTab "right"; }
-        bind "Alt n" { NewTab; }
+        bind "Alt n" { NewPane; }
         bind "Alt o" { MoveTab "right"; }
         bind "Alt p" { TogglePaneInGroup; }
         bind "Alt Shift p" { ToggleGroupMarking; }
@@ -172,6 +172,7 @@ keybinds clear-defaults=true {
         bind "Ctrl Shift tab" { MoveFocusOrTab "left";}
         bind "Ctrl tab" { MoveFocusOrTab "right";}
         bind "Alt e" { EditScrollback; }
+        bind "Alt t" { NewTab; }
     }
     shared_except "locked" "renametab" "renamepane" {
         bind "Ctrl g" { SwitchToMode "locked"; }

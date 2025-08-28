@@ -436,7 +436,7 @@ require("lazy").setup({
 				require("telescope").extensions.file_browser.file_browser()
 			end, { desc = "file [E]xplorer" })
 
-			vim.keymap.set("n", "<leader>zi", function()
+			vim.keymap.set("n", "<leader>z", function()
 				require("telescope").extensions.zoxide.list()
 			end, { desc = "exec [zi]" })
 		end,

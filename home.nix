@@ -109,16 +109,24 @@
 
   programs.fish = {
     enable = true;
+    preferAbbrs = true;
     functions = {
       reload = "source ~/.config/fish/config.fish";
     };
     shellAbbrs = {
       rebuild = "sudo nixos-rebuild switch --flake .";
+      l = "eza";
+      ls = "eza";
+      la = "eza -a";
+      ll = "eza -lgh --git";
+      lla = "eza -lgha --git";
+      lsd = "eza -D";
     };
     binds = {
       "alt-g" = {
         command = "z $(ghq root)/$(ghq list | fzf) && pwd && ls; commandline -f repaint";
       };
+      "alt-z".command = "zi";
     };
 
     # should not use keys taken by GNU Readline library
@@ -132,8 +140,10 @@
       ALT-C : fuzzy cd from current directory
       ALT-G : fuzzy cd to git repository
       ALT-E : edit scrollback in zellij
+      ALT-T : new tab in zellij
+      ALT-Z : zi
 
-      CMDs: y, zi 
+      CMDs: y
       "
     '';
   };
@@ -245,6 +255,11 @@
 
   programs.eza = {
     enable = true;
+    icons = "auto";
+    extraOptions = [
+      "-F"
+      "--group-directories-first"
+    ];
   };
 
   programs.yazi = {
