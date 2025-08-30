@@ -297,12 +297,12 @@
   boot.supportedFilesystems = [ "nfs" ];
   services.rpcbind.enable = true; # needed for NFS
 
-  services.ollama = {
-    # https://wiki.nixos.org/wiki/Ollama
-    enable = true;
-    loadModels = [ "gpt-oss:20b" ];
-  };
-  services.open-webui.enable = true; # localhost:8080
+  # services.ollama = {
+  #   # https://wiki.nixos.org/wiki/Ollama
+  #   enable = true;
+  #   loadModels = [ "gpt-oss:20b" ];
+  # };
+  # services.open-webui.enable = true; # localhost:8080
 
   systemd.timers."rsync-obsidian-vault" = {
     wantedBy = [ "timers.target" ];

@@ -635,6 +635,7 @@ require("lazy").setup({
 			local ensure_installed = {
 				"lua_ls",
 				"nil_ls",
+				"solidity_ls",
 			}
 			vim.lsp.enable(ensure_installed)
 		end,

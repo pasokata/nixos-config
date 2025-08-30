@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  ghostty,
   lib,
   ...
 }:
@@ -83,7 +82,7 @@
     # system tools
 
     # terminal
-    ghostty.packages.${pkgs.stdenv.hostPlatform.system}.default
+    ghostty
     tmux
 
     # dev
@@ -175,6 +174,7 @@
       vim-language-server
       bash-language-server
       nil
+      vscode-solidity-server
       # formatter
       stylua
       nixfmt-rfc-style
