@@ -173,11 +173,18 @@
       lua-language-server
       vim-language-server
       bash-language-server
-      nil
-      vscode-solidity-server
       # formatter
       stylua
+      # nix
+      nil
       nixfmt-rfc-style
+      # python
+      pyright # LSP
+      black # formatter
+      # solidity
+      vscode-solidity-server
+      foundry # fmt
+
     ];
     extraLuaConfig = "";
     extraLuaPackages = luaPkgs: with luaPkgs; [ ];
